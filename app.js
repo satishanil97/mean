@@ -34,7 +34,7 @@ app.use('/', appRoutes);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
-    return res.render('index');
+    return res.render('index');   //routing all other requests to index (where angular can work on it) instead of showing 404 error
 });
 
 
