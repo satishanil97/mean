@@ -3,7 +3,7 @@ import { Message } from "./message.model"
 
 @Component({
   selector: 'app-message',
-  templateUrl: './message.component.html'
+  templateUrl: './message.component.html',
   styles: [`
       .author {
         display: inline-block;
