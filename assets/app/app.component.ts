@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { Message } from './messages/message.model'
+import { MessageService } from "./messages/message.service"
 
 @Component({
     selector: 'my-app',
-    templateUrl: './app.component.html'
-    //the MessageService should be added as a provider here not in each individual sub component so that they can access a shared instance of MessageService
+    templateUrl: './app.component.html',
+    providers: [MessageService]
 })
 
 export class AppComponent {
