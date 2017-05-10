@@ -12,7 +12,7 @@ import { MessageService } from "./message.service"
       </app-message>
     </div>
   `,
-  providers: [MessageService]
+  providers: [MessageService] //this should'nt be here..it should be common in app component
 })
 
 export class MessageListComponent implements OnInit{    //the ngOninit lifecycle hooks is a life cycle hook that angular2 reaches when creating a component that has more than just basic initializations
