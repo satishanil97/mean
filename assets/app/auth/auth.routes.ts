@@ -5,7 +5,7 @@ import { LogoutComponent } from "./logout.component"
 
 
 export const AUTH_ROUTES: Routes = [
-  {path: '', redirectTo: 'signup', pathMatch: 'full'},  //not /sigup as it will take it to localhost:3000/sigin
+  {path: '', redirectTo: 'signup', pathMatch: 'full'},  //not /signup as it will take it to localhost:3000/sigin
   {path: 'signin', component: SigninComponent},
   {path: 'signup',component: SignupComponent},
   {path: 'logout', component: LogoutComponent}
