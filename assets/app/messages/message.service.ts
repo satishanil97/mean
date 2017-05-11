@@ -1,6 +1,6 @@
 import { Message } from "./message.model"
 import { Http, Response, Headers } from "@angular/http";
-import { Injectable } from "@angular/core";
+import { Injectable, EventEmitter } from "@angular/core";
 import 'rxjs/Rx';   //to unlock functions like map()
 import { Observable } from "rxjs";
 
@@ -9,6 +9,7 @@ import { Observable } from "rxjs";
 
 export class MessageService {
   private messages: Message[] = [];
+  messageEdit = new EventEmitter<Message>();  //returns a message
 
   constructor(private http: Http) {}   //to inject angular's http service
 
@@ -33,6 +34,14 @@ export class MessageService {
       return transformedMessages;
     })
     .catch((error: Response) => Observable.throw(error.json()));
+  }
+
+  editMessage(message: Message) {
+    this.messageEdit.emit(message);
+  }
+
+  updateMessage(message: Message) {
+    
   }
 
   deleteMessage(message: Message){
