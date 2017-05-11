@@ -31,7 +31,7 @@ app.use(function (req, res, next) {
     next();
 });
 
-app.use('/messages', messageRoutes);
+app.use('/message', messageRoutes); //Make sure you don't have backend routes which use the same paths as your frontend => /messages in app.js file and messages as a path in your Angular route config (i.e message.service.ts)
 app.use('/', appRoutes);
 
 // catch 404 and forward to error handler
