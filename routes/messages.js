@@ -10,13 +10,13 @@ router.post('/', function (req, res, next) {
   message.save(function(err,result) {
     if(err) {
       return res.status(500).json({
-        title: "An Error Occured",
+        title: 'An Error Occured',
         error: err
       });
     }
 
     res.status(201).json({
-      message: "Message Saved",
+      message: 'Message Saved',
       obj: result
     });
   });

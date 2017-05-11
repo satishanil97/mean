@@ -1,5 +1,5 @@
 import { Message } from "./message.model"
-import { Http, Response } from "@angular/http";
+import { Http, Response, Headers } from "@angular/http";
 import { Injectable } from "@angular/core";
 import 'rxjs/Rx';   //to unlock functions like map()
 import { Observable } from "rxjs";
@@ -10,17 +10,18 @@ import { Observable } from "rxjs";
 export class MessageService {
   private messages: Message[] = [];
 
-  constructor(private http: Http){}   //to inject angular's http service
+  constructor(private http: Http) {}   //to inject angular's http service
 
-  addMessage(message: Message){
+  addMessage(message: Message) {
     this.messages.push(message);
     const body = JSON.stringify(message);
-    return this.http.post('http://localhost:3000/messages',body).map((response: Response)=>response.json()).catch((error: Response)=>Observable.throw(error.json()));  //body - content to post ... NOTE!! this is not a post request , this only sets up an observable which holds the post requests to send when something subscribes to this observable
+    const headers = new Headers({'Content-Type': 'application/json'});  //NOTE!! without this header, the body is considered as plain text and so there will be no key value pairs-->error
+    return this.http.post('http://localhost:3000/messages', body, {headers: headers}).map((response: Response) => response.json()).catch((error: Response) => Observable.throw(error.json()));  //body - content to post ... NOTE!! this is not a post request , this only sets up an observable which holds the post requests to send when something subscribes to this observable
     //this observable should be subscribed by the component which calls addMessage()
     //response.json() strips headersof response, converts the data into json format
   }
 
-  getMessages(){
+  getMessages() {
     return this.messages;
   }
 

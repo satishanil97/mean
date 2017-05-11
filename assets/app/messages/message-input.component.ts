@@ -7,6 +7,7 @@ import { Message } from "./message.model"
   selector: 'app-message-input',
   templateUrl: './message-input.component.html'
 })
+
 export class MessageInputComponent {
   constructor(private messageService: MessageService){}   //angular 2 will automatically create a local instance of MessageService
 
