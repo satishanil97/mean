@@ -21,7 +21,7 @@ export class MessageService {
     return this.http.post('http://localhost:3000/message' + token, body, {headers: headers})
     .map((response: Response) => {
       const result = response.json();
-      const message = new Message(result.obj.content, "Me", result.obj._id, null);
+      const message = new Message(result.obj.content, result.obj.user.firstName, result.obj._id, result.obj.user._id); //result.obj.user is not userId, but the user object itself (../routes/messages.js - post())
       this.messages.push(message);
       return message;
     })
@@ -36,7 +36,8 @@ export class MessageService {
       const messages = response.json().obj; //obj is the field returning result in ./messages.js
       let transformedMessages: Message[] = [];  //since Message object in backend is different from frontend, we have to convert it to type defined in ./messages/message.model.ts
       for(let message of messages) {
-        transformedMessages.push(new Message(message.content, "Me", message._id, null));  // _id is used and not id as it is stored as _id in the backend
+        transformedMessages.push(new Message(message.content, message.user.firstName, message._id, message.user._id));  // _id is used and not id as it is stored as _id in the backend
+        //even though firstName is not a field in message.user, it is accessible as it is added by populate() in routes/message.js --get() methods
       }
       this.messages = transformedMessages;  //since 'messages' is referenced in other parts
       return transformedMessages;

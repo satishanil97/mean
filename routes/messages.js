@@ -4,8 +4,10 @@ var Message = require('../models/message');
 var jwt = require('jsonwebtoken');
 var User= require('../models/user');
 
-router.get('/', function (req, res, next) {
+router.get('/', function (req, res, next) { //we not only need the message, but also userID and firstName
   Message.find()
+         .populate('user', 'firstName')  //populate is a mongoose method that helps to expand the data to be retrieved-- here we do that using the Ref attribute ofmessage object
+         //first argument is the name of the field to expand,2nd argument is data to be added
          .exec(function (err, messages) {   //chain multiple methods to retrieve data and then call exec at the end to execute them all
            if(err) {
              return res.status(500).json({
@@ -49,7 +51,7 @@ router.post('/', function (req, res, next) {
 
     var message = new Message({
       content: req.body.content,
-      user: user  //linking message to the user
+      user: user  //linking message to the user -- this is not just the user id,but the whole user object
     });
 
     message.save(function(err, result) {
