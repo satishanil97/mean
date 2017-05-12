@@ -8,6 +8,7 @@ var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var appRoutes = require('./routes/app');
 var messageRoutes = require('./routes/messages');
+var userRoutes = require('./routes/user');
 
 var app = express();
 mongoose.connect('localhost:27017/node-angular');
@@ -32,6 +33,7 @@ app.use(function (req, res, next) {
 });
 
 app.use('/message', messageRoutes); //Make sure you don't have backend routes which use the same paths as your frontend => /messages in app.js file and messages as a path in your Angular route config (i.e message.service.ts)
+app.use('/user', userRoutes);
 app.use('/', appRoutes);
 
 // catch 404 and forward to error handler
