@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { AuthService } from './auth.service'
 
 @Component({
   selector: 'app-authentication',
@@ -7,8 +8,8 @@ import { Component, OnInit } from '@angular/core';
       <nav class="col-md-8 col-md-offset-2">
         <ul class="nav nav-tabs">
           <li routerLinkActive="active"><a [routerLink]="['signup']">Signup</a></li>
-          <li routerLinkActive="active"><a [routerLink]="['signin']">Signin</a></li>
-          <li routerLinkActive="active"><a [routerLink]="['logout']">Logout</a></li>
+          <li routerLinkActive="active" *ngIf="!isLoggedIn()"><a [routerLink]="['signin']">Signin</a></li>
+          <li routerLinkActive="active" *ngIf="isLoggedIn()"><a [routerLink]="['logout']">Logout</a></li>
         </ul> <!-- [routerLink] is a built-in directive it needs a list of paths to route to, routerLinkActive belongs to routerLink directive and whatever is assigned to it will be added as the class of current html element -->
       </nav>
     </header>
@@ -19,6 +20,11 @@ import { Component, OnInit } from '@angular/core';
 })
 
 export class AuthenticationComponent implements OnInit {
-  constructor() {}
+  constructor(private authService: AuthService) {}
+
+  isLoggedIn() {
+    return this.authService.isLoggedIn();
+  }
+
   ngOnInit() {}
 }
