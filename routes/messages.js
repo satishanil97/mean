@@ -24,7 +24,7 @@ router.get('/', function (req, res, next) {
 router.use('/', function(req, res, next) {  //use() ensures that for every route request, it invokes this function after get() defined above -- this function is to check if a useris authenticated before letting him do any actions
   jwt.verify(req.query.token, 'secret',function (err, decoded) {  //token is passed as query i.e encoded in the url like ?token='secret'
     if(err) {
-      return res.status(500).json({
+      return res.status(401).json({
         title: 'Not Authenticated',
         error: err
       });
@@ -72,6 +72,7 @@ router.post('/', function (req, res, next) {
 });
 
 router.patch('/:id', function (req, res, next) {    //PATCH - http request used for modifying an existing resource -- PUT request is used to entirely replace a resource
+  var decoded = jwt.decode(req.query.token);
   Message.findById(req.params.id, function (err, message) {
     if(err) {
       return res.status(500).json({
@@ -84,6 +85,13 @@ router.patch('/:id', function (req, res, next) {    //PATCH - http request used 
       return res.status(500).json({
         title: 'Message Not Found',
         error: {message: 'Message Not Found'} //the errors thrown by mongoose (err) will contain the 'message' property..so it is good practice to be consistent with it
+      });
+    }
+
+    if(message.user != decoded.user._id) {
+      return res.status(401).json({
+        title: 'Not Authorized',
+        error: {message: 'Users do not match'}
       });
     }
 
@@ -105,6 +113,7 @@ router.patch('/:id', function (req, res, next) {    //PATCH - http request used 
 });
 
 router.delete('/:id', function (req, res, next) {    //DELETE - http request used for deleting a resource
+  var decoded = jwt.decode(req.query.token);
   Message.findById(req.params.id, function (err, message) {
     if(err) {
       return res.status(500).json({
@@ -117,6 +126,13 @@ router.delete('/:id', function (req, res, next) {    //DELETE - http request use
       return res.status(500).json({
         title: 'Message Not Found',
         error: {message: 'Message Not Found'} //the errors thrown by mongoose (err) will contain the 'message' property..so it is good practice to be consistent with it
+      });
+    }
+
+    if(message.user != decoded.user._id) {
+      return res.status(401).json({
+        title: 'Not Authorized',
+        error: {message: 'Users do not match'}
       });
     }
 
