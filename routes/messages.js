@@ -39,7 +39,7 @@ router.post('/', function (req, res, next) {
   });
 });
 
-router.patch('/:id', function (req, res, next) {
+router.patch('/:id', function (req, res, next) {    //PATCH - http request used for modifying an existing resource -- PUT request is used to entirely replace a resource
   Message.findById(req.params.id, function (err, message) {
     if(err) {
       return res.status(500).json({

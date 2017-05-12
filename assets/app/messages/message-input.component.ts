@@ -16,6 +16,7 @@ export class MessageInputComponent implements OnInit {
   onSubmit(form: NgForm){
     if(this.message) {  //Edit existing message
       this.message.content = form.value.content;
+      this.messageService.updateMessage(this.message).subscribe(result => console.log(result), error => console.error(error));
       this.message = null;    //otherwise the form will not reset
     }
 
