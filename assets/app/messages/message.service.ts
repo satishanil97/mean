@@ -17,7 +17,8 @@ export class MessageService {
     //this.messages.push(message);    //by doing this, the message that is added to the frontend item - 'messages' will not have the messageId
     const body = JSON.stringify(message);
     const headers = new Headers({'Content-Type': 'application/json'});  //NOTE!! without this header, the body is considered as plain text and so there will be no key value pairs-->error
-    return this.http.post('http://localhost:3000/message', body, {headers: headers})
+    const token = localStorage.getItem('token') ? '?token=' + localStorage.getItem('token') : ''; //if there is atoken in local storage,then token = ?token=that else token = empty string
+    return this.http.post('http://localhost:3000/message' + token, body, {headers: headers})
     .map((response: Response) => {
       const result = response.json();
       const message = new Message(result.obj.content, "Me", result.obj._id, null);
@@ -50,12 +51,14 @@ export class MessageService {
   updateMessage(message: Message) {
     const body = JSON.stringify(message);
     const headers = new Headers({'Content-Type': 'application/json'});  //NOTE!! without this header, the body is considered as plain text and so there will be no key value pairs-->error
-    return this.http.patch('http://localhost:3000/message/' + message.messageId, body, {headers: headers}).map((response: Response) => response.json()).catch((error: Response) => Observable.throw(error.json()));
+    const token = localStorage.getItem('token') ? '?token=' + localStorage.getItem('token') : '';
+    return this.http.patch('http://localhost:3000/message/' + message.messageId + token, body, {headers: headers}).map((response: Response) => response.json()).catch((error: Response) => Observable.throw(error.json()));
     //message.messageId of frontend is populated by getMessages() when it is called
   }
 
   deleteMessage(message: Message){
     this.messages.splice(this.messages.indexOf(message),1);
-    return this.http.delete('http://localhost:3000/message/' + message.messageId).map((response: Response) => response.json()).catch((error: Response) => Observable.throw(error.json()));
+    const token = localStorage.getItem('token') ? '?token=' + localStorage.getItem('token') : '';
+    return this.http.delete('http://localhost:3000/message/' + message.messageId + token).map((response: Response) => response.json()).catch((error: Response) => Observable.throw(error.json()));
   }
 }

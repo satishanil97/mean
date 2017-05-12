@@ -22,7 +22,7 @@ router.get('/', function (req, res, next) {
 });
 
 router.use('/', function(req, res, next) {  //use() ensures that for every route request, it invokes this function after get() defined above -- this function is to check if a useris authenticated before letting him do any actions
-  jwt.verify(req.query.token, 'secret',function (err, decoded) {
+  jwt.verify(req.query.token, 'secret',function (err, decoded) {  //token is passed as query i.e encoded in the url like ?token='secret'
     if(err) {
       return res.status(500).json({
         title: 'Not Authenticated',
