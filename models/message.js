@@ -7,11 +7,11 @@ var schema = new Schema({
   user: {type: Schema.Types.ObjectId, ref: 'User'}
 });
 
-schema.post('remove', function(err, message) {  //mongoose provides this functionality to take an action based on an event in the database--here post => after
+schema.post('remove', function(message) {  //mongoose provides this functionality to take an action based on an event in the database--here post => after
   User.findById(message.user, function (err, user) {
       user.messages.pull(message);
       user.save();
   });
 });
 
-module.exports = mongoose.model('Message',schema);
+module.exports = mongoose.model('Message', schema);

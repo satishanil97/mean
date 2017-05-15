@@ -14,7 +14,8 @@ export class AuthService {
   signUp(user: User) {
     const body = JSON.stringify(user);
     const headers = new Headers({'Content-Type': 'application/json'});
-    return this.http.post('http://localhost:3000/user', body, {headers: headers}).map((response: Response) => response.json())
+    return this.http.post('http://localhost:3000/user', body, {headers: headers})
+    .map((response: Response) => response.json())
     .catch((error: Response) => {
       this.errorService.handleError(error.json());  //catch fnuction allows us to run our own code before proceeding with the default actions
       return Observable.throw(error.json());
@@ -24,7 +25,8 @@ export class AuthService {
   signIn(user: User) {
     const body = JSON.stringify(user);
     const headers = new Headers({'Content-Type': 'application/json'});
-    return this.http.post('http://localhost:3000/user/signin', body, {headers: headers}).map((response: Response) => response.json())
+    return this.http.post('http://localhost:3000/user/signin', body, {headers: headers})
+    .map((response: Response) => response.json())
     .catch((error: Response) => {
       this.errorService.handleError(error.json());  //catch fnuction allows us to run our own code before proceeding with the default actions
       return Observable.throw(error.json());
@@ -36,6 +38,6 @@ export class AuthService {
   }
 
   isLoggedIn() {
-    return localStorage.getItem('token') != null;
+    return localStorage.getItem('token') !== null;
   }
 }
