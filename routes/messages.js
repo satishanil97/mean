@@ -106,7 +106,7 @@ router.patch('/:id', function (req, res, next) {    //PATCH - http request used 
         });
       }
 
-      res.status(201).json({
+      res.status(200).json({
         message: 'Message Updated',
         obj: result
       });
@@ -146,7 +146,7 @@ router.delete('/:id', function (req, res, next) {    //DELETE - http request use
         });
       }
       //removing this message from the list of messages of current user is done by the mongoose middleware that is defined in models/messages.js
-      res.status(201).json({
+      res.status(200).json({
         message: 'Message Deleted',
         obj: result
       });

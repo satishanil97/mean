@@ -1,6 +1,5 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var mongooseUniqueValidator = require('mongoose-unique-validator');
 var User = require('./user');
 
 var schema = new Schema({
@@ -9,9 +8,9 @@ var schema = new Schema({
 });
 
 schema.post('remove', function(err, message) {  //mongoose provides this functionality to take an action based on an event in the database--here post => after
-  User.findById(message.user, function(err, user) {
-    user.messages.pull(message);
-    user.save();
+  User.findById(message.user, function (err, user) {
+      user.messages.pull(message);
+      user.save();
   });
 });
 

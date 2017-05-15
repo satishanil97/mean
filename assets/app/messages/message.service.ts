@@ -3,6 +3,7 @@ import { Http, Response, Headers } from "@angular/http";
 import { Injectable, EventEmitter } from "@angular/core";
 import 'rxjs/Rx';   //to unlock functions like map()
 import { Observable } from "rxjs";
+import { ErrorService } from '../errors/error.service'
 
 @Injectable()   //angular 2 injector can only inject services into classes that have some form of metadata (like decorator) attached to it
                 //@Injectable simply adds some metadata so that injector can inject the service
@@ -11,7 +12,7 @@ export class MessageService {
   private messages: Message[] = [];
   messageEdit = new EventEmitter<Message>();  //returns a message
 
-  constructor(private http: Http) {}   //to inject angular's http service
+  constructor(private http: Http, private errorService: ErrorService) {}   //to inject angular's http service, our errorService
 
   addMessage(message: Message) {
     //this.messages.push(message);    //by doing this, the message that is added to the frontend item - 'messages' will not have the messageId
@@ -25,7 +26,11 @@ export class MessageService {
       this.messages.push(message);
       return message;
     })
-    .catch((error: Response) => Observable.throw(error.json()));  //body - content to post ... NOTE!! this is not a post request , this only sets up an observable which holds the post requests to send when something subscribes to this observable
+    .catch((error: Response) => {
+      this.errorService.handleError(error.json());  //catch fnuction allows us to run our own code before proceeding with the default actions
+      return Observable.throw(error.json());
+    });
+     //body - content to post ... NOTE!! this is not a post request , this only sets up an observable which holds the post requests to send when something subscribes to this observable
     //this observable should be subscribed by the component which calls addMessage()
     //response.json() strips headersof response, converts the data into json format
   }
@@ -42,7 +47,10 @@ export class MessageService {
       this.messages = transformedMessages;  //since 'messages' is referenced in other parts
       return transformedMessages;
     })
-    .catch((error: Response) => Observable.throw(error.json()));
+    .catch((error: Response) => {
+      this.errorService.handleError(error.json());  //catch fnuction allows us to run our own code before proceeding with the default actions
+      return Observable.throw(error.json());
+    });
   }
 
   editMessage(message: Message) {
@@ -53,13 +61,22 @@ export class MessageService {
     const body = JSON.stringify(message);
     const headers = new Headers({'Content-Type': 'application/json'});  //NOTE!! without this header, the body is considered as plain text and so there will be no key value pairs-->error
     const token = localStorage.getItem('token') ? '?token=' + localStorage.getItem('token') : '';
-    return this.http.patch('http://localhost:3000/message/' + message.messageId + token, body, {headers: headers}).map((response: Response) => response.json()).catch((error: Response) => Observable.throw(error.json()));
+    return this.http.patch('http://localhost:3000/message/' + message.messageId + token, body, {headers: headers}).map((response: Response) => response.json())
+    .catch((error: Response) => {
+      this.errorService.handleError(error.json());  //catch function allows us to run our own code before proceeding with the default actions
+      return Observable.throw(error.json());
+    });
     //message.messageId of frontend is populated by getMessages() when it is called
   }
 
   deleteMessage(message: Message){
     this.messages.splice(this.messages.indexOf(message),1);
     const token = localStorage.getItem('token') ? '?token=' + localStorage.getItem('token') : '';
-    return this.http.delete('http://localhost:3000/message/' + message.messageId + token).map((response: Response) => response.json()).catch((error: Response) => Observable.throw(error.json()));
+    return this.http.delete('http://localhost:3000/message/' + message.messageId + token)
+    .map((response: Response) => response.json())
+    .catch((error: Response) => {
+      this.errorService.handleError(error.json());  //catch function allows us to run our own code before proceeding with the default actions
+      return Observable.throw(error.json());
+    });
   }
 }
