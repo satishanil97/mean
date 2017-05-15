@@ -1,14 +1,11 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { ReactiveFormsModule } from "@angular/forms";
 import { AppComponent } from "./app.component";
-import { MessageComponent } from "./messages/message.component";
-import { MessageListComponent } from "./messages/message-list.component";
-import { MessageInputComponent } from "./messages/message-input.component";
-import { MessagesComponent } from "./messages/messages.component";
 import { AuthenticationComponent } from "./auth/authentication.component";
 import { HeaderComponent } from "./header.component";
 import { routing } from "./app.routing";
+import { MessageModule } from './messages/message.module'
 import { LogoutComponent } from "./auth/logout.component";
 import { SignupComponent } from "./auth/signup.component";
 import { SigninComponent } from "./auth/signin.component";
@@ -20,10 +17,6 @@ import { ErrorService } from './errors/error.service'
 @NgModule({
     declarations: [
         AppComponent,
-        MessageComponent,
-        MessageListComponent,
-        MessageInputComponent,
-        MessagesComponent,
         AuthenticationComponent,
         HeaderComponent,
         LogoutComponent,
@@ -31,10 +24,12 @@ import { ErrorService } from './errors/error.service'
         SigninComponent,
         ErrorComponent
     ],
-    imports: [BrowserModule , FormsModule, routing, ReactiveFormsModule, HttpModule],
+    imports: [BrowserModule , routing, ReactiveFormsModule, HttpModule, MessageModule],
     providers: [AuthService,ErrorService],
     bootstrap: [AppComponent]
 })
 export class AppModule {
 
 }
+
+//we nedd to declare a message related component in app module only if we were to use one of its selectors and directly embed it in one of our component templates in app.component.html

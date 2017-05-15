@@ -5,7 +5,7 @@ import { MessageService } from "./messages/message.service"
 @Component({
     selector: 'my-app',
     templateUrl: './app.component.html',
-    providers: [MessageService] //by adding this here instead of in each individual sub component, we have made all sub-components access a common service instance from MessageService - now, message list will get displayed properly
+   //no need of Message Service as a provider anymore as it is included in MessageModule
 })
 
 export class AppComponent {
