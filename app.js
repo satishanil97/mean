@@ -11,7 +11,7 @@ var messageRoutes = require('./routes/messages');
 var userRoutes = require('./routes/user');
 
 var app = express();
-mongoose.connect('localhost:27017/node-angular');
+mongoose.connect('https://angular-messenger.herokuapp.com/node-angular');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
