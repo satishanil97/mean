@@ -1,0 +1,609 @@
+1.    got to express.js.com and install the express generator: npm install express-generator -g (to globally install it)
+      This is a tool which scaffles out a basic Node-Express project, which we can use to build upon.
+
+2.    switch to the project folder, then run express . --hbs ('.' if we're using this folder, otherwise provide path of folder)
+      (--hbs to set hbs handlebars as the default view engine)
+
+3.    Now, a basic project structure would be automatically generated
+4.    npm install
+5.    npm start (starts the basic node-express app created by express-generator)
+6.    add a gitignore file to ignore ide files,node-modules folder (which can always be created using npm install)
+      and public/js (where we store the compiled angular2 app)
+
+7.    get rid of images folder, rename public/javascript to public/js (not necessary)
+8.    remove routes/users.js, rename index.js to app.js (not necessary)
+9.    remove index/ layout.hbs and error.hbs
+10.   in app.js in root folder, remove //var users = require('./routes/users'),rename var routes to appRoutes and require('routes/index') to routes/app
+11.   in app.js, remove all error handlers (below //error handlers), in //catch 404 --> replace contents of use() with res.render('index');
+      ,then remove app.use('/users'), rename app.use('/',routes) to appRoutes
+12.   The native app doesn't allow frontend and backend to be on different servers, if we want to allow that then add:
+      app.use(function (req, res, next) {
+          res.setHeader('Access-Control-Allow-Origin', '*');  //allows any other omain to access this server ('*' -- eveery source)
+          res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept'); //which headers to allow on incoming requests
+          res.setHeader('Access-Control-Allow-Methods', 'POST, GET, PATCH, DELETE, OPTIONS'); //which http methods to allow
+          next(); //to let the request continue to the path mentioned in appRoutes
+      });
+
+13.   add angular package to the dependencies in packages.json:
+      "@angular/animations": "^4.0.0",
+      "@angular/common": "^4.0.0",
+      "@angular/compiler": "^4.0.0",
+      "@angular/compiler-cli": "^4.0.0",
+      "@angular/core": "^4.0.0",
+      "@angular/forms": "^4.0.0",
+      "@angular/http": "^4.0.0",
+      "@angular/platform-browser": "^4.0.0",
+      "@angular/platform-browser-dynamic": "^4.0.0",
+      "@angular/platform-server": "^4.0.0",
+      "@angular/router": "^4.0.0",
+      "@angular/upgrade": "^4.0.0",
+      "bcryptjs": "^2.4.3"    //for encryption during authentication
+
+      angular also needs some polyfills (polyfills dependencies) to work correctly : npm install --save zone.js rxjs core-js
+
+14.   Now we can add types -- types are the bridge between JS libraries and typescript code : npm install --save-dev @types/node @types/core-js,
+      this adds devDependencies in packages.json
+
+15.   Here, webpack is used to build the project : npm install --save-dev webpack@2.1.0-beta.21 webpack--merge angular2-template-loader awesome-typescript-loader del-cli html-loader typescript angular2-router-loader
+      (merge -- to merge multiple config files)
+
+16.   To set up webpack workflow --> set up a tsconfig.json file (forcompilation of typescript) and put the ncessary dependencies
+
+17.   Setup webpack configuration -- webpack.config.common.js to hold a generalsetup for dev and prodn workflow
+18.   Also create webpack.config.dev.js and webpack.config.prod.js
+19.   run npm install once again to reflect the changes made to packages.json
+20.   To create the angular appl, create a new folders -- assets -->app, here create app.component.ts, .html, .module, main.ts (to start everything)
+      and polyfills.ts to hold the polyfills of the application
+
+21.   Also, we can add app.component.css if we want to keep styles separately, now in app.component.ts --> to @Component({}) add styleUrls: ['./app.component.css']
+22.   In main.ts, import polyfills, platformBrowserDynamic - to have just-in-time compilation in the browser
+      platformBrowserDynamic().bootstrapModule(AppModule); //this line will start the application
+
+23.   Add a script named build for the development workflow : build: blahblahblah
+24.   npm run build -- gives an error, to solve this, goto webpack.config.common.js and add :
+      plugins: [
+        new webpack.ContextreplacementPlugin(
+        //The (\\|\/) piece accounts for path separators in unix and windows
+        /angular(\\|\/)core(\\|\/)(esm(\\|\/)src|src)(\\|\/)linker/,
+        './src' //location of your src
+        )
+      ]
+
+25.   npm run build
+26.   npm start --> now the application is running
+
+      --Production Workflow--
+
+27.   To use AOT - ahead oftime offline compilation, --> create tsconfig.aot.json
+28.   Copy and paste contents of tsconfig.jsontotsconfig.aot.json, change moduleto "module": "es2015",
+      add "outDir": "./public/js" (temporary - Directory where we store the files we create)
+      add "assets/app/polyfills.ts",
+      then add:
+      a new field - "angularCompilerOptions": {
+        "skipMetadataEmit: true;
+      }
+
+
+      -----------TO UPDATE CUTSOM SEED TO ANGULAR4-----------
+
+   Since Angular 4 doesn't break Angular 2 code, we only need to change our build process and the respective config files. You don't need to change any of your Angular 2 application code.
+
+1) Let's start by updating the package.json :
+
+First of all, we need to install Angular 4 and you can do this by running:
+
+npm install --save @angular/core @angular/common @angular/animations @angular/platform-browser @angular/platform-browser-dynamic @angular/forms @angular/http @angular/router @angular/compiler @angular/compiler-cli
+
+and possibly (but not required) also
+
+npm install --save @angular/platform-server @angular/upgrade
+
+Of course we should also update the polyfills and dependencies of Angular:
+
+npm install --save core-js zone.js rxjs
+
+After running all these commands, your package.json file should hold the following dependencies  (version numbers may vary):
+
+    "dependencies": {
+      "@angular/animations": "^4.0.0",
+      "@angular/common": "^4.0.0",
+      "@angular/compiler": "^4.0.0",
+      "@angular/compiler-cli": "^4.0.0",
+      "@angular/core": "^4.0.0",
+      "@angular/forms": "^4.0.0",
+      "@angular/http": "^4.0.0",
+      "@angular/platform-browser": "^4.0.0",
+      "@angular/platform-browser-dynamic": "^4.0.0",
+      "@angular/platform-server": "^4.0.0",
+      "@angular/router": "^4.0.0",
+      "@angular/upgrade": "^4.0.0",
+      "body-parser": "~1.15.2",
+      "cookie-parser": "~1.4.3",
+      "debug": "~2.2.0",
+      "express": "~4.14.0",
+      "hbs": "~3.1.0",
+      "morgan": "~1.6.1",
+      "reflect-metadata": "^0.1.3",
+      "core-js": "^2.4.1",
+      "rxjs": "^5.2.0",
+      "zone.js": "^0.8.5",
+      "serve-favicon": "~2.3.0"
+    },
+
+Let's now work on the devDependencies :
+
+You may replace the section in the package.json  (as we created it in this module) with the following versions:
+
+    "devDependencies": {
+      "@types/core-js": "0.9.36",
+      "@types/node": "^6.0.45",
+      "angular-router-loader": "^0.5.0",
+      "angular2-template-loader": "^0.5.0",
+      "awesome-typescript-loader": "^3.1.2",
+      "del-cli": "^0.2.0",
+      "html-loader": "^0.4.4",
+      "raw-loader": "^0.5.1",
+      "ts-loader": "^2.0.3",
+      "typescript": "^2.1.4",
+      "webpack": "^2.2.1",
+      "webpack-merge": "^4.1.0"
+    }
+
+With that, we should have all the packages and versions we need.
+
+2) Time to use these new packages to tweak our webpack configs:
+
+In the webpack.common.config.js  file, we'll remove the .ts  loaders and the ContextReplacementPlugin .
+
+Since we use Webpack 2 (final) now, we also should switch to the new module.rules  syntax (learn more).
+
+Your file should look like this thereafter:
+
+    var webpack = require('webpack');
+
+    module.exports = {
+        entry: {
+            'app': './assets/app/main.ts'
+        },
+
+        resolve: {
+            extensions: ['.js', '.ts']
+        },
+
+        module: {
+            rules: [
+                {
+                    test: /\.html$/,
+                    use: [{ loader: 'html-loader' }]
+                },
+                {
+                    test: /\.css$/,
+                    use: [{ loader: 'raw-loader' }]
+                }
+            ],
+            exprContextCritical: false
+
+        }
+    };
+
+Since we removed the .ts loaders here, we of course need to add them to the other two files (webpack.config.dev.js  and webpack.config.prod.js ).
+
+Let's do this - starting with webpack.config.dev.js :
+
+    var path = require('path');
+
+    var webpackMerge = require('webpack-merge');
+    var commonConfig = require('./webpack.config.common.js');
+
+    module.exports = webpackMerge(commonConfig, {
+        devtool: 'cheap-module-eval-source-map',
+
+        output: {
+            path: path.resolve(__dirname + '/public/js/app'),
+            publicPath: "/js/app/",
+            filename: 'bundle.js',
+            publicPath: '/js/app/',
+            chunkFilename: '[id].chunk.js'
+        },
+        module: {
+            rules: [
+                {
+                    test: /\.ts$/,
+                    use: [
+                        {loader: 'awesome-typescript-loader', options: {
+                            transpileOnly: true
+                        }},
+                        {loader: 'angular2-template-loader'},
+                        {loader: 'angular-router-loader'}
+                    ]
+                }
+            ]
+
+        }
+    });
+
+What changed?
+
+a) The output path got changed to an absolute one, using Node's path helper
+
+b) The rules for .ts  files were added. Here, we also changed the name of angular2-router-loader  to angular-router-loader . That's the current name of this package.
+
+Notice the transpileOnly: true  option on the awesome-typescript-loader . We need that option, otherwise we'll get an error that it doesn't find the AppModuleNgFactory . This module/ file indeed isn't there but it will be during aot-compilation. So to prevent this error, we tell awesome-typescript-loader , that it shouldn't analyze our whole directory (which it would do by default) but that it should only transpile the given TypeScript code.
+
+With that, we can move on to the webpack.config.prod.js  file.
+
+We need to adjust the .ts rules there, too (and move to the new webpack syntax of using rules  to begin with).
+
+The file should then look like this:
+
+    var path = require('path');
+
+    var webpack = require('webpack');
+    var webpackMerge = require('webpack-merge');
+    var commonConfig = require('./webpack.config.common.js');
+
+    module.exports = webpackMerge.smart(commonConfig, {
+        entry: {
+            'app': './assets/app/main.aot.ts'
+        },
+
+        output: {
+            path: path.resolve(__dirname + '/public/js/app'),
+            filename: 'bundle.js',
+            publicPath: '/js/app/',
+            chunkFilename: '[id].[hash].chunk.js'
+        },
+
+        module: {
+            rules: [
+                {
+                    test: /\.ts$/,
+                    use: [
+                        'awesome-typescript-loader',
+                        'angular2-template-loader',
+                        'angular-router-loader?aot=true'
+                    ]
+                }
+            ]
+        },
+
+        plugins: [
+            new webpack.optimize.UglifyJsPlugin({
+                sourceMap: false
+            })
+        ]
+    });
+
+What changed?
+
+a) The output.path  was updated (just as it was in the webpack.config.dev.js  file).
+
+b)  angular-router-loader  was renamed in this file, too. And we removed the genDir  option - it's not required anymore in the updated setup.
+
+c) The webpack.NoErrorsPlugin()  was removed
+
+3) Adjust the tsconfig files
+
+Almost done! Let's now update the tsconfig.json  and the tsconfig.aot.json  files!
+
+Since we now use TypeScript 2 in this setup, we can take advantage of some new features.
+
+The tsconfig.json  file should therefore look like this:
+
+    {
+      "compilerOptions": {
+        "moduleResolution": "node",
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "target": "es5",
+        "typeRoots": [
+          "node_modules/@types"
+        ],
+        "lib": [
+          "es5",
+          "dom"
+        ]
+      }
+    }
+
+What changed?
+
+a) typeRoots  was added to inform TypeScript about where to find out @types  definitions we installed (check package.json)
+
+b) lib  was added to inform TypeScript about some of the features we're about to use. If we omit this, we would get some issues between TS and our @types  packages (having duplicate definitions).
+
+We basically do the same in the tsconfig.aot.json  file:
+
+    {
+      "compilerOptions": {
+        "target": "es5",
+        "module": "es2015",
+        "moduleResolution": "node",
+        "sourceMap": false,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "removeComments": false,
+        "noImplicitAny": false,
+        "outDir": "./public/js/app"
+      },
+      "typeRoots": [
+        "node_modules/@types"
+      ],
+      "lib": [
+        "es5",
+        "dom"
+      ],
+      "angularCompilerOptions": {
+        "skipMetadataEmit": true
+      }
+    }
+
+But here we also may now remove exclude , it shouldn't be required anymore.
+
+----------------TO UPDATE FROM ANGULAR-RC to ANGULAR-FINAL-----------------
+
+The updated Version of the Course uses Angular 2.0 Final instead of the Beta or RC version. It also uses Webpack as a Build Tool instead of the SystemJS Module Loader.
+
+To successfully update, you can copy your Angular 2 Code Files (in assets/app) into the new Seed Project (in the assets/app folder as well). Make sure that you're using the app.component.ts - if your Root Component (filename) is named differently, make sure to copy all its code into the app.component.ts file. The same is true for the app.component.html.
+
+That should allow you to use the new Folder Structure, but you're still using the old Angular 2 Code.
+
+There are three major Differences between RC and Angular 2.0 Final:
+
+1) Angular 2 now uses "Modules". You'll see the app.module.ts file in your assets/app folder (in the new seed project). In this AppModule, register ALL Components, Directives and Pipes you may use in the declarations[] array.
+
+Register all Services you may provide in the bootstrap() method in the providers[] array of the AppModule.
+
+Don't use bootstrap() anymore to provide services. Don't use directives[] or pipes[] in @Component anymore - follow the above approach instead.
+
+Learn more about that change here: https://www.barbarianmeetscoding.com/blog/2016/08/13/updating-your-angular-2-app-from-rc4-to-rc5-a-practical-guide/
+
+2) In the above Article you can already read about it: The Router also needs updating.
+
+You can follow the steps outline in the Article. Generally, you don't use @Routes anymore. Instead, create a new file (e.g. app.routing.ts) in your root (assets/app) folder and store your Routes there. Make sure to watch the videos where I set up Routing in the updated course sections to learn more about setting up Routes with the new Router.
+
+3) Forms now also changed. Here I also strongly advise to have a look at the updated Videos to understand how you now use the Template-Driven or Data-Driven (Reactive) Approach.
+
+4) Also make sure to use HttpModule (add it to your imports[] in AppModule) instead of HTTP_PROVIDERS
+
+With that, your Project should be updated. Make sure to also use my updated Source Code to trace any Errors you may encounter.
+
+-------
+
+Required Code Updates in Detail:
+
+Angular 2.0 Final was released and with it, a couple of changes have to implemented in this course's project.
+
+Definitely check out the updated source code to understand all these changes.
+
+1) NgModule
+
+RC5 introduced the concept of "Application Modules" (learn more here - no worries, it's not that complicated ;-)). For many applications, one module will suffice. This is the case for this course's project for example.
+
+An App Module basically bundles a couple of Components, Directives, Services and Pipes together. In the case of one single module (as in this course), the whole app is bundled together.
+
+Learn more about App Modules in the article linked above.
+
+Getting Started with NgModule
+
+In order to update your app from RCx to 2.0 Final, you have to put ALL components you used to add in the directives field of the @Component  decorator into the declarations field in the @NgModule  decorator on your AppModule.
+
+Previously, you would have added MessageComponent  to the directives array in the @Component  decorator like this:
+
+    @Component({
+        ...
+        directives: [MessageComponent]
+    })
+
+This is no longer correct!
+
+Instead, you would use the AppModule  in the app.module.ts  file like this:
+
+    import { NgModule } from '@angular/core';
+    import { BrowserModule } from '@angular/platform-browser';
+
+    import { AppComponent } from "./app.component";
+    import { MessageComponent } from "./messages/message.component";
+
+    @NgModule({
+        declarations: [AppComponent, MessageComponent],
+        imports: [BrowserModule],
+        bootstrap: [AppComponent]
+    })
+    export class AppModule {
+
+    }
+
+Providing Application-Wide Services
+
+A similar change has to be applied to application-wide provided services.
+
+Previously, you would add them in the bootstrap()  method like this:
+
+    ///<reference path="../../typings/index.d.ts"/>
+    import { bootstrap } from '@angular/platform-browser-dynamic';
+
+    import { AppComponent } from "./app.component";
+    import { MessageService } from "./messages/message.service";
+
+    bootstrap(AppComponent, [MessageService]);
+
+This is no longer correct, instead you provide this service in the AppModule  as well:
+
+    import { NgModule } from '@angular/core';
+    import { BrowserModule } from '@angular/platform-browser';
+
+    import { AppComponent } from "./app.component";
+    import { MessageComponent } from "./messages/message.component";
+    import { MessageService } from "./messages/message.service";
+
+    @NgModule({
+        declarations: [AppComponent, MessageComponent],
+        imports: [BrowserModule],
+        bootstrap: [AppComponent],
+        providers: [MessageService]
+    })
+    export class AppModule {
+
+    }
+
+How to bootstrap the Application with NgModule
+
+Lastly, since we have this AppModule , the way the application gets bootstrapped also changed.
+
+You see the boot.ts  file as it looked previously in the example above.
+
+Now it looks like this:
+
+    ///<reference path="../../typings/index.d.ts"/>
+    import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+
+    import { AppModule } from "./app.module";
+
+    platformBrowserDynamic().bootstrapModule(AppModule);
+
+The AppModule gets bootstrapped since it holds all the information about our application.
+
+2) New Forms - Template Driven (in this course: create / edit message)
+
+Forms also got changed. Learn more about them here.
+
+Template-driven Forms now use a different syntax - it's best to simply have a look at the source code attached to this lecture. Basically, you don't use ngControl  anymore - instead you use ngModel .
+
+You can now also reset forms with form.reset() .
+
+Forms also have to be enabled by importing a specific module in the AppModule.
+
+For template-driven forms, you have to import the FormsModule .
+
+    import { NgModule } from '@angular/core';
+    import { BrowserModule } from '@angular/platform-browser';
+
+    import { AppComponent } from "./app.component";
+    import { MessageService } from "./messages/message.service";
+    import { MessageComponent } from "./messages/message.component";
+    import { MessageInputComponent } from "./messages/message-input.component";
+    import { FormsModule } from "@angular/forms";
+
+    @NgModule({
+        declarations: [
+            AppComponent,
+            MessageComponent,
+            MessageInputComponent
+        ],
+        imports: [BrowserModule, FormsModule],
+        bootstrap: [AppComponent],
+        providers: [MessageService]
+    })
+    export class AppModule {
+
+    }
+
+3) New Forms - Data Driven (in this course: Sign Up & Sign In)
+
+Forms also got changed. Learn more about them here.
+
+The general approach hasn't changed but the directives you use in your template were changed / renamed. Consult the attached source code to learn more.
+
+
+Forms also have to be enabled by importing a specific module in the AppModule.
+
+For data-driven (= reactive) forms, you have to import the ReactiveFormsModule .
+
+    import { NgModule } from '@angular/core';
+    import { BrowserModule } from '@angular/platform-browser';
+
+    import { AppComponent } from "./app.component";
+    import { MessageService } from "./messages/message.service";
+    import { MessageComponent } from "./messages/message.component";
+    import { MessageInputComponent } from "./messages/message-input.component";
+    import { ReactiveFormsModule } from "@angular/forms";
+
+    @NgModule({
+        declarations: [
+            AppComponent,
+            MessageComponent,
+            MessageInputComponent
+        ],
+        imports: [BrowserModule, ReactiveFormsModule],
+        bootstrap: [AppComponent],
+        providers: [MessageService]
+    })
+    export class AppModule {
+
+    }
+
+4) New Router
+
+Angular 2 received yet another new Router. The syntax is very different to the old syntax but fortunately not that difficult to get into.
+
+You define your routes in separate files - again, check the attached code to see it in action. Basically, you provide an array of JS objects, where each object defines one route. For that, you define the path (i.e. part of the URL), the component which should get loaded and possible children of that route.
+
+
+You then have to use RouterModule to provide the root routes for your application. An example app.routing.ts  file could look like this:
+
+    import { Routes, RouterModule } from "@angular/router";
+
+    import { AUTH_ROUTES } from "./auth/auth.routes";
+    import { MessagesComponent } from "./messages/messages.component";
+    import { AuthenticationComponent } from "./auth/authentication.component";
+
+    const APP_ROUTES: Routes = [
+        { path: '', component: MessagesComponent},
+        { path: 'auth', component: AuthenticationComponent, children: [
+            ...AUTH_ROUTES
+        ] }
+    ];
+
+    export const ROUTING = RouterModule.forRoot(APP_ROUTES);
+
+Note that AUTH_ROUTES  is just another array of routes, stored in another file (there, you don't need the RouterModule  - it's just an array of objects).
+
+The exported constant ROUTING  then has to be imported in your AppModule:
+
+    import { NgModule } from '@angular/core';
+    import { BrowserModule } from '@angular/platform-browser';
+
+    import { AppComponent } from "./app.component";
+    import { ROUTING } from "./app.routing";
+
+    @NgModule({
+        declarations: [
+            AppComponent
+        ],
+        imports: [BrowserModule, ROUTING],
+        bootstrap: [AppComponent]
+    })
+    export class AppModule {
+
+    }
+
+That's all - this defines your routes and you may then use them.
+
+In order to use them, you can create links or navigate directly from code. For both concepts, the syntax hasn't changed that much. Again, have a look at the attached code to learn more.
+
+You don't need to import ROUTER_DIRECTIVES  anymore! At no place in your app!
+
+5) HttpModule
+
+In order to use Http, you no longer provide HTTP_PROVIDERS  in the bootstrap()  method. Remember, the bootstrap()  method isn't used anymore when using NgModule.
+
+Instead, you have to import the HttpModule in your AppModule .
+
+    import { NgModule } from '@angular/core';
+    import { BrowserModule } from '@angular/platform-browser';
+
+    import { AppComponent } from "./app.component";
+    import { HttpModule } from "@angular/http";
+
+    @NgModule({
+        declarations: [
+            AppComponent
+        ],
+        imports: [BrowserModule, HttpModule],
+        bootstrap: [AppComponent]
+    })
+    export class AppModule {
+
+
+    }
