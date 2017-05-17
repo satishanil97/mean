@@ -19,7 +19,7 @@ export class MessageService {
     const body = JSON.stringify(message);
     const headers = new Headers({'Content-Type': 'application/json'});  //NOTE!! without this header, the body is considered as plain text and so there will be no key value pairs-->error
     const token = localStorage.getItem('token') ? '?token=' + localStorage.getItem('token') : ''; //if there is atoken in local storage,then token = ?token=that else token = empty string
-    return this.http.post('https://angular-messenger.herokuapp.com/message' + token, body, {headers: headers})
+    return this.http.post('http://localhost:3000/message' + token, body, {headers: headers})
     .map((response: Response) => {
       const result = response.json();
       const message = new Message(result.obj.content, result.obj.user.firstName, result.obj._id, result.obj.user._id); //result.obj.user is not userId, but the user object itself (../routes/messages.js - post())
@@ -36,7 +36,7 @@ export class MessageService {
   }
 
   getMessages() {
-    return this.http.get('https://angular-messenger.herokuapp.com/message')//.map //here it is localhost:3000/message instead of messages as backend uses /messages
+    return this.http.get('http://localhost:3000/message')//.map //here it is localhost:3000/message instead of messages as backend uses /messages
       .map((response: Response) => {
       const messages = response.json().obj; //obj is the field returning result in ./messages.js
       let transformedMessages: Message[] = [];  //since Message object in backend is different from frontend, we have to convert it to type defined in ./messages/message.model.ts
@@ -61,7 +61,7 @@ export class MessageService {
     const body = JSON.stringify(message);
     const headers = new Headers({'Content-Type': 'application/json'});  //NOTE!! without this header, the body is considered as plain text and so there will be no key value pairs-->error
     const token = localStorage.getItem('token') ? '?token=' + localStorage.getItem('token') : '';
-    return this.http.patch('https://angular-messenger.herokuapp.com/message/' + message.messageId + token, body, {headers: headers}).map((response: Response) => response.json())
+    return this.http.patch('http://localhost:3000/message/' + message.messageId + token, body, {headers: headers}).map((response: Response) => response.json())
     .catch((error: Response) => {
       this.errorService.handleError(error.json());  //catch function allows us to run our own code before proceeding with the default actions
       return Observable.throw(error.json());
@@ -72,7 +72,7 @@ export class MessageService {
   deleteMessage(message: Message){
     this.messages.splice(this.messages.indexOf(message),1);
     const token = localStorage.getItem('token') ? '?token=' + localStorage.getItem('token') : '';
-    return this.http.delete('https://angular-messenger.herokuapp.com/message/' + message.messageId + token)
+    return this.http.delete('http://localhost:3000/message/' + message.messageId + token)
     .map((response: Response) => response.json())
     .catch((error: Response) => {
       this.errorService.handleError(error.json());  //catch function allows us to run our own code before proceeding with the default actions
